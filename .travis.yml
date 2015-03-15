@@ -1,0 +1,50 @@
+sudo: false
+language: cpp
+compiler:
+    - gcc
+    - clang
+addons:
+  apt:
+    sources:
+    - ubuntu-toolchain-r-test
+    - boost-latest
+    packages:
+    - gcc-4.9
+    - g++-4.9
+    - cmake
+    - libgfortran3
+    - gfortran
+    - libopenmpi-dev
+    - openmpi-bin
+    - libblas-dev
+    - liblapack-dev
+    - libfftw3-dev
+    - libgmp-dev
+    - libhdf5-serial-dev
+    - libboost1.55-all-dev
+
+before_install:
+    - if [ "$CXX" == "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
+
+
+    #Set anaconda python environment
+    - cd $HOME
+    - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+    - chmod +x miniconda.sh
+    - ./miniconda.sh -b
+    - export PATH=$HOME/miniconda/bin:$PATH
+    - conda update --yes conda
+    - conda create --yes -n testenv python=2.7 numpy scipy matplotlib tornado pyzmq cython h5py pip
+    - source activate testenv
+    - pip install mako mpi4py
+
+
+install:
+    - mkdir -p $HOME/_build
+    - cd $HOME/_build
+    - cmake -DCMAKE_INSTALL_PREFIX=$HOME/lib/ -DUSE_CPP14=ON $TRAVIS_BUILD_DIR
+    - make -j4
+
+script:
+    - make test
+
