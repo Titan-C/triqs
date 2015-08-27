@@ -22,6 +22,19 @@ addons:
     - libgmp-dev
     - libhdf5-serial-dev
     - libboost1.55-all-dev
+deploy:
+  provider: s3
+  access_key_id: $AWS_A_KEY
+  secret_access_key: $AWS_S_KEY
+  bucket: buildbin
+  skip_cleanup: true
+  region: us-west-2
+  endpoint: s3-us-west-2.amazonaws.com
+  local_dir: $HOME/bin
+  on:
+    branch: travis
+    condition: $CXX = g++
+
 
 before_install:
     - if [ "$CXX" == "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
@@ -47,4 +60,6 @@ install:
 
 script:
     - make test
-
+    - make install
+    - mkdir $HOME/bin
+    - tar -jvcf $HOME/bin/triqs.tar.bz2 $HOME/lib
