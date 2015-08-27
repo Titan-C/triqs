@@ -1,4 +1,5 @@
-sudo: false
+sudo: required
+dist: trusty
 language: cpp
 compiler:
     - gcc
@@ -9,15 +10,13 @@ addons:
     - ubuntu-toolchain-r-test
     - boost-latest
     packages:
-    - gcc-4.9
-    - g++-4.9
+    - gcc-5
+    - g++-5
     - cmake
     - libgfortran3
     - gfortran
     - libopenmpi-dev
     - openmpi-bin
-    - libblas-dev
-    - liblapack-dev
     - libfftw3-dev
     - libgmp-dev
     - libhdf5-serial-dev
@@ -33,26 +32,27 @@ deploy:
   local_dir: $HOME/bin
   on:
     branch: travis
-    condition: $CXX = g++
 
 
 before_install:
-    - if [ "$CXX" == "g++" ]; then export CXX="g++-4.9" CC="gcc-4.9"; fi
+    - if [ "$CXX" == "g++" ]; then export CXX="g++-5" CC="gcc-5"; fi
 
 
     #Set anaconda python environment
     - cd $HOME
-    - wget http://repo.continuum.io/miniconda/Miniconda-latest-Linux-x86_64.sh -O miniconda.sh
+    - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
     - chmod +x miniconda.sh
     - ./miniconda.sh -b
-    - export PATH=$HOME/miniconda/bin:$PATH
+    - export PATH=$HOME/miniconda3/bin:$PATH
     - conda update --yes conda
-    - conda create --yes -n testenv python=2.7 numpy scipy matplotlib tornado pyzmq cython h5py pip
+    - conda create --yes -n testenv python=2.7 nomkl numpy scipy matplotlib tornado pyzmq cython h5py pip
     - source activate testenv
     - pip install mako mpi4py
 
 
 install:
+    - export C_INCLUDE_PATH=$HOME/miniconda3/envs/testenv/include:$C_INCLUDE_PATH
+    - export CPLUS_INCLUDE_PATH=$HOME/miniconda3/envs/testenv/include:$CPLUS_INCLUDE_PATH
     - mkdir -p $HOME/_build
     - cd $HOME/_build
     - cmake -DCMAKE_INSTALL_PREFIX=$HOME/lib/ -DUSE_CPP14=ON $TRAVIS_BUILD_DIR
@@ -62,4 +62,4 @@ script:
     - make test
     - make install
     - mkdir $HOME/bin
-    - tar -jvcf $HOME/bin/triqs.tar.bz2 $HOME/lib
+    - tar -jvcf $HOME/bin/triqs_$CC.tar.bz2 $HOME/lib
