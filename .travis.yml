@@ -1,17 +1,13 @@
 sudo: required
 dist: trusty
 language: cpp
-compiler:
-    - gcc
-    - clang
+
 addons:
   apt:
     sources:
-    - ubuntu-toolchain-r-test
     - boost-latest
+    - ubuntu-toolchain-r-test
     packages:
-    - gcc-5
-    - g++-5
     - cmake
     - libgfortran3
     - gfortran
@@ -21,6 +17,26 @@ addons:
     - libgmp-dev
     - libhdf5-serial-dev
     - libboost1.55-all-dev
+    - gcc-5
+    - g++-5
+    - gcc-6
+    - g++-6
+
+matrix:
+  include:
+    - compiler: gcc
+      env:
+        - COMPILERXX=g++-5
+        - COMPILER=gcc-5
+    - compiler: gcc
+      env:
+        - COMPILERXX=g++-6
+        - COMPILER=gcc-6
+    - compiler: clang
+      env:
+        - COMPILERXX=clang++
+        - COMPILER=clang
+
 deploy:
   provider: s3
   access_key_id: $AWS_A_KEY
@@ -35,17 +51,16 @@ deploy:
 
 
 before_install:
-    - if [ "$CXX" == "g++" ]; then export CXX="g++-5" CC="gcc-5"; fi
-
-
+    - export CXX=$COMPILERXX CC=$COMPILER
+    - env
     #Set anaconda python environment
     - cd $HOME
     - wget http://repo.continuum.io/miniconda/Miniconda3-latest-Linux-x86_64.sh -O miniconda.sh
     - chmod +x miniconda.sh
     - ./miniconda.sh -b
     - export PATH=$HOME/miniconda3/bin:$PATH
-    - conda update --yes conda
-    - conda create --yes -n testenv python=2.7 nomkl numpy scipy matplotlib tornado pyzmq cython h5py pip
+    - conda update --yes --quiet conda
+    - conda create --yes --quiet -n testenv python=2.7 nomkl numpy scipy matplotlib tornado pyzmq cython h5py pip
     - source activate testenv
     - pip install mako mpi4py
 
@@ -59,7 +74,7 @@ install:
     - make -j4
 
 script:
-    - make test
+    - make test -j4
     - make install
     - mkdir $HOME/bin
     - tar -jvcf $HOME/bin/triqs_$CC.tar.bz2 $HOME/lib
