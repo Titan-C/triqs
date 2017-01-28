@@ -13,6 +13,8 @@ addons:
     - gfortran
     - libopenmpi-dev
     - openmpi-bin
+    - libopenblas-base
+    - libopenblas-dev
     - libfftw3-dev
     - libgmp-dev
     - libhdf5-serial-dev
