@@ -71,6 +71,8 @@ install:
     - export C_INCLUDE_PATH=$HOME/miniconda3/envs/testenv/include:$C_INCLUDE_PATH
     - export CPLUS_INCLUDE_PATH=$HOME/miniconda3/envs/testenv/include:$CPLUS_INCLUDE_PATH
     - export LD_LIBRARY_PATH=$CONDA_PREFIX/lib:$LD_LIBRARY_PATH
+    - ln -sf /usr/lib/libopenblas.so /usr/lib/libblas.so
+    - ln -sf /usr/lib/libopenblas.so /usr/lib/liblapack.so
     - mkdir -p $HOME/_build
     - cd $HOME/_build
     - cmake -DCMAKE_INSTALL_PREFIX=$HOME/lib/ $TRAVIS_BUILD_DIR
