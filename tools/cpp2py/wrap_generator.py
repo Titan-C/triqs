@@ -874,7 +874,7 @@ class module_ :
         """
         f = None
         if app_name is not None: self.module_path_list.append(install_dir+"/include/"+app_name+"/py_converters/")
-        for path in self.module_path_list :
+        for path in self.module_path_list + [install_dir] :
           hppfile = path + '/' +  modulename + '.hpp'
           if os.path.exists(hppfile) :
               f = open(hppfile ,'r')
