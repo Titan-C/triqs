@@ -73,10 +73,10 @@ install:
     - mkdir -p $HOME/_build
     - cd $HOME/_build
     - cmake -DCMAKE_INSTALL_PREFIX=$HOME/lib/ $TRAVIS_BUILD_DIR
-    - make -j4
+    - make
 
 script:
-    - make test -j4
+    - make test
     - make install
     - mkdir $HOME/bin
     - tar -jvcf $HOME/bin/triqs_$CC.tar.bz2 $HOME/lib
