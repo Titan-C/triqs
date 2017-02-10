@@ -7,6 +7,7 @@ addons:
     sources:
     - boost-latest
     - ubuntu-toolchain-r-test
+    - llvm-toolchain-trusty
     packages:
     - cmake
     - libgfortran3
@@ -23,6 +24,8 @@ addons:
     - g++-5
     - gcc-6
     - g++-6
+    - clang-3.9
+    - lldb-3.9
 
 matrix:
   include:
