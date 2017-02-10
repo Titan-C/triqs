@@ -24,8 +24,6 @@ addons:
     - g++-5
     - gcc-6
     - g++-6
-    - clang-3.9
-    - lldb-3.9
 
 matrix:
   include:
@@ -37,11 +35,6 @@ matrix:
       env:
         - COMPILERXX=g++-6
         - COMPILER=gcc-6
-    - compiler: clang
-      env:
-        - COMPILERXX=clang++
-        - COMPILER=clang
-
 deploy:
   provider: s3
   access_key_id: $AWS_A_KEY
